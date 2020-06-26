@@ -1,6 +1,9 @@
 # source files
 SRCS := \
-    Main.cpp
+    Main.cpp \
+	Shader.cpp \
+	Mesh.cpp \
+	Window.cpp
 
 ifeq ($(OS),Windows_NT)
 	include win.mak
