@@ -63,7 +63,7 @@ private:
     GLfloat mMouseLastY;
     GLfloat mMouseChangeX = 0;
     GLfloat mMouseChangeY = 0;
-    bool mouseFirstMoved = false;
+    bool mouseFirstMoved = true;
 
     // Callbacks
     void CreateCallBacks();

@@ -64,13 +64,13 @@ void Camera::MouseContol(GLfloat xChange, GLfloat yChange)
     mCamYawRad += xChange;
     mCamPitchRad += yChange;
 
-    if (mCamPitchRad > glm::pi<GLfloat>() / 2.f)
+    if (mCamPitchRad > glm::pi<GLfloat>() / 2.1f)
     {
-        mCamPitchRad = glm::pi<GLfloat>() / 2.f;
+        mCamPitchRad = glm::pi<GLfloat>() / 2.1f;
     }
-    else if (mCamPitchRad < glm::pi<GLfloat>() / -2.f)
+    else if (mCamPitchRad < glm::pi<GLfloat>() / -2.1f)
     {
-        mCamPitchRad = glm::pi<GLfloat>() / -2.f;
+        mCamPitchRad = glm::pi<GLfloat>() / -2.1f;
     }
 
     Update();
