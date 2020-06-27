@@ -16,6 +16,7 @@
 #include "Camera.hpp"
 #include "Texture.hpp"
 #include "Light.hpp"
+#include "Material.hpp"
 
 int CheckGLError()
 {
@@ -117,9 +118,12 @@ int main(int argc, char const *argv[])
     CreateObjects(meshList);
     CreateShaders(shaderList);
 
-    Camera cam(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f, 5.1f, 0.5f);
-    Light mainLight(1.0f, 1.0f, 1.0f, 0.2f,
-                    2.0f, -1.0f, -2.0f, 1.0f);
+    Camera cam(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
+    Light mainLight(1.0f, 1.0f, 1.0f, 0.1f,
+					0.0f, 0.0f, -1.0f, 0.3f);
+
+	Material shinyMaterial = Material(1.0f, 32);
+	Material dullMaterial = Material(0.3f, 4);
 
     shaderList[0].UseShader();
 
@@ -130,6 +134,9 @@ int main(int argc, char const *argv[])
     GLint uniformAmbCol = shaderList[0].GetAmbientColorLocation();
     GLint uniformDirection = shaderList[0].GetDirectionLocation();
     GLint uniformDiffuseIntensity = shaderList[0].GetDiffuseIntensityLocation();
+    GLint uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
+    GLint uniformShininess = shaderList[0].GetShininessLocation();
+    GLint uniformEyePos = shaderList[0].GetEyePosLocation();
 
     mainLight.UseLight(unifromAmbInt, uniformAmbCol, uniformDiffuseIntensity, uniformDirection);
 
@@ -137,7 +144,7 @@ int main(int argc, char const *argv[])
     GLfloat aspectRatio = static_cast<GLfloat>(bufferDims.first) / static_cast<GLfloat>(bufferDims.second);
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
 
-    glClearColor(0.2f, 0.6f, 0.8f, 1.0f);
+    glClearColor(0.f, 0.f, 0.f, 1.0f);
     GLfloat angle = 0;
     GLfloat deltaTime, lastTime;
     while (!wind.ShouldWindowClose())
@@ -156,22 +163,26 @@ int main(int argc, char const *argv[])
         shaderList[0].UseShader();
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(cam.CalculateViewMatrix()));
+        glUniform3f(uniformEyePos, cam.GetCameraPosition().x, cam.GetCameraPosition().y, cam.GetCameraPosition().z);
 
         glm::mat4 model(1.0f);
 
-        model = glm::translate(model, glm::vec3(0.5f * cosf(angle), 0.5f * sinf(angle), -2.5f));
+        // model = glm::translate(model, glm::vec3(0.5f * cosf(angle), 0.5f * sinf(angle), -2.5f));
+        model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
+        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         brickTexture.UseTexture();
         meshList[0]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.f, 0.f, -2.5f));
-        model = glm::rotate(model, angle, glm::vec3(0.f, 0.f, 1.f));
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));
+        // model = glm::rotate(model, angle, glm::vec3(0.f, 0.f, 1.f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
+        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         dirtTexture.UseTexture();
         meshList[1]->RenderMesh();
 

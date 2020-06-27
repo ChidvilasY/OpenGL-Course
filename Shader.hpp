@@ -50,6 +50,21 @@ public:
         return mUniformDiffuseIntensity;
     }
 
+    GLint GetSpecularIntensityLocation()
+    {
+        return mUniformSpecularIntensity;
+    }
+
+    GLint GetShininessLocation()
+    {
+        return mUniformShininess;
+    }
+
+    GLint GetEyePosLocation()
+    {
+        return mEyePosLocation;
+    }
+
     void UseShader()
     {
         glUseProgram(mShaderID);
@@ -61,10 +76,13 @@ public:
 
 private:
     GLuint mShaderID;
-    GLint mUniformProjection, mUniformModel, mUniformView;
+    GLint mUniformProjection, mUniformModel, mUniformView, mEyePosLocation;
     GLint mUniforomAmbientIntensity, mUniformColor;
     GLint mUniformDiffuseIntensity, mUniformDirection;
+    GLint mUniformSpecularIntensity, mUniformShininess;
 
     void CompileShader(const char *vertexCode, const char *fragmentCode);
     void AddShader(GLuint program, const char *shaderCode, GLenum shaderType);
+
+    GLint GetUniformLocation(const char *uniformName);
 };

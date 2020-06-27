@@ -61,6 +61,7 @@ void Window::Initialize()
     glEnable(GL_DEPTH_TEST);
 
     glfwSetWindowUserPointer(mMainWindow, this);
+    // glfwSetInputMode(mMainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Create Viewport
     glViewport(0, 0, mBufferWidth, mBufferHeight);

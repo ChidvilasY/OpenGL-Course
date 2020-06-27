@@ -109,15 +109,31 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
         throw std::runtime_error(eLog.data());
     }
 
-    mUniformModel = glGetUniformLocation(mShaderID, "model");
-    mUniformProjection = glGetUniformLocation(mShaderID, "projection");
-    mUniformView = glGetUniformLocation(mShaderID, "view");
+    mUniformModel = GetUniformLocation("model");
+    mUniformProjection = GetUniformLocation("projection");
+    mUniformView = GetUniformLocation("view");
 
-    mUniforomAmbientIntensity = glGetUniformLocation(mShaderID, "directionalLight.ambientIntensity");
-    mUniformColor = glGetUniformLocation(mShaderID, "directionalLight.color");
+    mUniforomAmbientIntensity = GetUniformLocation("directionalLight.ambientIntensity");
+    mUniformColor = GetUniformLocation("directionalLight.color");
 
-    mUniformDiffuseIntensity = glGetUniformLocation(mShaderID, "directionalLight.diffuseIntensity");
-    mUniformDirection = glGetUniformLocation(mShaderID, "directionalLight.direction");
+    mUniformDiffuseIntensity = GetUniformLocation("directionalLight.diffuseIntensity");
+    mUniformDirection = GetUniformLocation("directionalLight.direction");
+
+    mUniformShininess = GetUniformLocation("material.shininess");
+    mUniformSpecularIntensity = GetUniformLocation("material.specularIntensity");
+
+    mEyePosLocation = GetUniformLocation("eyePosition");
+}
+
+GLint Shader::GetUniformLocation(const char *uniformName)
+{
+    GLint loc = glGetUniformLocation(mShaderID, uniformName);
+    if (loc < 0)
+    {
+        throw std::runtime_error("Failed to Get Unifrom Location: " + std::string(uniformName));
+    }
+
+    return loc;
 }
 
 void Shader::AddShader(GLuint program, const char *shaderCode, GLenum shaderType)
