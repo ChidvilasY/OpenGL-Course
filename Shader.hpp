@@ -37,7 +37,17 @@ public:
 
     GLint GetAmbientColorLocation()
     {
-        return mUniformAmbientColor;
+        return mUniformColor;
+    }
+
+    GLint GetDirectionLocation()
+    {
+        return mUniformDirection;
+    }
+
+    GLint GetDiffuseIntensityLocation()
+    {
+        return mUniformDiffuseIntensity;
     }
 
     void UseShader()
@@ -52,7 +62,8 @@ public:
 private:
     GLuint mShaderID;
     GLint mUniformProjection, mUniformModel, mUniformView;
-    GLint mUniforomAmbientIntensity, mUniformAmbientColor;
+    GLint mUniforomAmbientIntensity, mUniformColor;
+    GLint mUniformDiffuseIntensity, mUniformDirection;
 
     void CompileShader(const char *vertexCode, const char *fragmentCode);
     void AddShader(GLuint program, const char *shaderCode, GLenum shaderType);
