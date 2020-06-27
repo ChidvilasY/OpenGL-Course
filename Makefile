@@ -3,7 +3,9 @@ SRCS := \
     Main.cpp \
 	Shader.cpp \
 	Mesh.cpp \
-	Window.cpp
+	Window.cpp \
+	Camera.cpp \
+	stb_image.cpp
 
 ifeq ($(OS),Windows_NT)
 	include win.mak

@@ -25,6 +25,11 @@ public:
         return mUniformModel;
     }
 
+    GLuint GetViewLocation()
+    {
+        return mUniformView;
+    }
+
     void UseShader()
     {
         glUseProgram(mShaderID);
@@ -35,7 +40,7 @@ public:
     ~Shader();
 
 private:
-    GLuint mShaderID, mUniformProjection, mUniformModel;
+    GLuint mShaderID, mUniformProjection, mUniformModel, mUniformView;
 
     void CompileShader(const char *vertexCode, const char *fragmentCode);
     void AddShader(GLuint program, const char *shaderCode, GLenum shaderType);

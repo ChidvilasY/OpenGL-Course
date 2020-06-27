@@ -86,31 +86,36 @@ help:
 	@echo available targets: all dist clean distclean install uninstall check
 
 $(BIN): $(OBJS)
-	$(LD) $^ $(LINK.o)
+	@echo Building $@
+	@$(LD) $^ $(LINK.o)
 
 $(OBJDIR)/%.o: %.c
 $(OBJDIR)/%.o: %.c $(DEPDIR)/%.d
-	$(PRECOMPILE)
-	$(COMPILE.c) $<
-	$(POSTCOMPILE)
+	@echo Building $@
+	@$(PRECOMPILE)
+	@$(COMPILE.c) $<
+	@$(POSTCOMPILE)
 
 $(OBJDIR)/%.o: %.cpp
 $(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.d
-	$(PRECOMPILE)
-	$(COMPILE.cc) $<
-	$(POSTCOMPILE)
+	@echo Building $@
+	@$(PRECOMPILE)
+	@$(COMPILE.cc) $<
+	@$(POSTCOMPILE)
 
 $(OBJDIR)/%.o: %.cc
 $(OBJDIR)/%.o: %.cc $(DEPDIR)/%.d
-	$(PRECOMPILE)
-	$(COMPILE.cc) $<
-	$(POSTCOMPILE)
+	@echo Building $@
+	@$(PRECOMPILE)
+	@$(COMPILE.cc) $<
+	@$(POSTCOMPILE)
 
 $(OBJDIR)/%.o: %.cxx
 $(OBJDIR)/%.o: %.cxx $(DEPDIR)/%.d
-	$(PRECOMPILE)
-	$(COMPILE.cc) $<
-	$(POSTCOMPILE)
+	@echo Building $@
+	@$(PRECOMPILE)
+	@$(COMPILE.cc) $<
+	@$(POSTCOMPILE)
 
 .PRECIOUS: $(DEPDIR)/%.d
 $(DEPDIR)/%.d: ;

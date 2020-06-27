@@ -16,12 +16,6 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::WindowResized(GLFWwindow *window, int width, int height)
-{
-    Window *thisPtr = static_cast<Window *>(glfwGetWindowUserPointer(window));
-    thisPtr->ResizeWindow(width, height);
-}
-
 void Window::Initialize()
 {
     if (!glfwInit())
@@ -68,18 +62,71 @@ void Window::Initialize()
 
     glfwSetWindowUserPointer(mMainWindow, this);
 
-    glfwSetWindowSizeCallback(mMainWindow, WindowResized);
-
     // Create Viewport
     glViewport(0, 0, mBufferWidth, mBufferHeight);
+
+    CreateCallBacks();
 }
 
-void Window::ResizeWindow(GLint newWidth, GLint newHeight)
+void Window::CreateCallBacks()
 {
-    mWidth = newWidth;
-    mHeight = newHeight;
+    glfwSetWindowSizeCallback(mMainWindow, WindowResized);
 
-    glfwGetFramebufferSize(mMainWindow, &mBufferWidth, &mBufferHeight);
+    glfwSetKeyCallback(mMainWindow, HandleKeys);
 
-    glViewport(0, 0, mBufferWidth, mBufferHeight);
+    glfwSetCursorPosCallback(mMainWindow, HandleCursor);
+}
+
+void Window::WindowResized(GLFWwindow *window, int newWidth, int newHeight)
+{
+    Window *thisPtr = static_cast<Window *>(glfwGetWindowUserPointer(window));
+
+    thisPtr->mWidth = newWidth;
+    thisPtr->mHeight = newHeight;
+
+    glfwGetFramebufferSize(thisPtr->mMainWindow, &thisPtr->mBufferWidth, &thisPtr->mBufferHeight);
+
+    glViewport(0, 0, thisPtr->mBufferWidth, thisPtr->mBufferHeight);
+}
+
+void Window::HandleKeys(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    Window *thisPtr = static_cast<Window *>(glfwGetWindowUserPointer(window));
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+    if (key >= 0 && key < 1024)
+    {
+        if (action == GLFW_PRESS)
+        {
+            thisPtr->mKeysPressed[key] = true;
+        }
+        else if (action == GLFW_RELEASE)
+        {
+            thisPtr->mKeysPressed[key] = false;
+        }
+    }
+}
+
+void Window::HandleCursor(GLFWwindow *window, double xPosDouble, double yPosDouble)
+{
+    GLfloat xPos = static_cast<GLfloat>(xPosDouble);
+    GLfloat yPos = static_cast<GLfloat>(yPosDouble);
+
+    Window *thisPtr = static_cast<Window *>(glfwGetWindowUserPointer(window));
+
+    if (thisPtr->mouseFirstMoved)
+    {
+        thisPtr->mMouseLastX = xPos;
+        thisPtr->mMouseLastY = yPos;
+        thisPtr->mouseFirstMoved = false;
+    }
+
+    thisPtr->mMouseChangeX = xPos - thisPtr->mMouseLastX ;
+    thisPtr->mMouseChangeY = thisPtr->mMouseLastY - yPos;
+
+    thisPtr->mMouseLastX = xPos;
+    thisPtr->mMouseLastY = yPos;
 }
