@@ -5,6 +5,12 @@
 
 #include <GL/glew.h>
 
+#include "CommonValues.hpp"
+
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
+
+
 class Shader
 {
 public:
@@ -32,22 +38,22 @@ public:
 
     GLint GetAmbientIntensityLocation()
     {
-        return mUniforomAmbientIntensity;
+        return mUniformDirectionLight.uniformAmbientIntensity;
     }
 
     GLint GetAmbientColorLocation()
     {
-        return mUniformColor;
+        return mUniformDirectionLight.uniformColor;
     }
 
     GLint GetDirectionLocation()
     {
-        return mUniformDirection;
+        return mUniformDirectionLight.uniformDirection;
     }
 
     GLint GetDiffuseIntensityLocation()
     {
-        return mUniformDiffuseIntensity;
+        return mUniformDirectionLight.uniformDiffuseIntensity;
     }
 
     GLint GetSpecularIntensityLocation()
@@ -70,16 +76,43 @@ public:
         glUseProgram(mShaderID);
     }
 
+    void SetDirectionalLight(DirectionalLight *dirLight);
+    void SetPointLights(PointLight *poiLight, unsigned int lightCount);
     void ClearShader();
 
     ~Shader();
 
 private:
     GLuint mShaderID;
+
+    int mPointLightCount{};
+
     GLint mUniformProjection, mUniformModel, mUniformView, mEyePosLocation;
-    GLint mUniforomAmbientIntensity, mUniformColor;
-    GLint mUniformDiffuseIntensity, mUniformDirection;
     GLint mUniformSpecularIntensity, mUniformShininess;
+    GLint mUniformPointLightCount;
+
+    struct
+    {
+        GLint uniformColor;
+        GLint uniformAmbientIntensity;
+        GLint uniformDiffuseIntensity;
+
+        GLint uniformDirection;
+    } mUniformDirectionLight;
+
+    struct UniformPointLight
+    {
+        GLint uniformColor;
+        GLint uniformAmbientIntensity;
+        GLint uniformDiffuseIntensity;
+
+        GLint uniformPosition;
+        GLint uniformConstant;
+        GLint uniformLinear;
+        GLint uniformQuadratic;
+    };
+
+    UniformPointLight mUniformDPointLight[MAX_POINT_LIGHTS];
 
     void CompileShader(const char *vertexCode, const char *fragmentCode);
     void AddShader(GLuint program, const char *shaderCode, GLenum shaderType);

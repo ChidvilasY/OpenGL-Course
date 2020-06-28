@@ -7,6 +7,7 @@
 
 Shader::Shader()
     : mShaderID(0),
+      mPointLightCount(0),
       mUniformProjection(0),
       mUniformModel(0)
 {
@@ -113,16 +114,44 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
     mUniformProjection = GetUniformLocation("projection");
     mUniformView = GetUniformLocation("view");
 
-    mUniforomAmbientIntensity = GetUniformLocation("directionalLight.ambientIntensity");
-    mUniformColor = GetUniformLocation("directionalLight.color");
+    mUniformDirectionLight.uniformAmbientIntensity = GetUniformLocation("directionalLight.base.ambientIntensity");
+    mUniformDirectionLight.uniformColor = GetUniformLocation("directionalLight.base.color");
 
-    mUniformDiffuseIntensity = GetUniformLocation("directionalLight.diffuseIntensity");
-    mUniformDirection = GetUniformLocation("directionalLight.direction");
+    mUniformDirectionLight.uniformDiffuseIntensity = GetUniformLocation("directionalLight.base.diffuseIntensity");
+    mUniformDirectionLight.uniformDirection = GetUniformLocation("directionalLight.direction");
 
     mUniformShininess = GetUniformLocation("material.shininess");
     mUniformSpecularIntensity = GetUniformLocation("material.specularIntensity");
 
     mEyePosLocation = GetUniformLocation("eyePosition");
+
+    mUniformPointLightCount = GetUniformLocation("pointLightCount");
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        std::string uniStr;
+
+        uniStr = "pointLights[" + std::to_string(i) + "].base.color";
+        mUniformDPointLight[i].uniformColor = GetUniformLocation(uniStr.data());
+
+        uniStr = "pointLights[" + std::to_string(i) + "].base.ambientIntensity";
+        mUniformDPointLight[i].uniformAmbientIntensity = GetUniformLocation(uniStr.data());
+
+        uniStr = "pointLights[" + std::to_string(i) + "].base.diffuseIntensity";
+        mUniformDPointLight[i].uniformDiffuseIntensity = GetUniformLocation(uniStr.data());
+
+        uniStr = "pointLights[" + std::to_string(i) + "].position";
+        mUniformDPointLight[i].uniformPosition = GetUniformLocation(uniStr.data());
+
+        uniStr = "pointLights[" + std::to_string(i) + "].constant";
+        mUniformDPointLight[i].uniformConstant = GetUniformLocation(uniStr.data());
+
+        uniStr = "pointLights[" + std::to_string(i) + "].linear";
+        mUniformDPointLight[i].uniformLinear = GetUniformLocation(uniStr.data());
+
+        uniStr = "pointLights[" + std::to_string(i) + "].quadratic";
+        mUniformDPointLight[i].uniformQuadratic = GetUniformLocation(uniStr.data());
+    }
 }
 
 GLint Shader::GetUniformLocation(const char *uniformName)
@@ -160,4 +189,33 @@ void Shader::AddShader(GLuint program, const char *shaderCode, GLenum shaderType
     }
 
     glAttachShader(program, theShader);
+}
+
+void Shader::SetDirectionalLight(DirectionalLight *dirLight)
+{
+    dirLight->UseLight(mUniformDirectionLight.uniformAmbientIntensity,
+                       mUniformDirectionLight.uniformColor,
+                       mUniformDirectionLight.uniformDiffuseIntensity,
+                       mUniformDirectionLight.uniformDirection);
+}
+
+void Shader::SetPointLights(PointLight *poiLight, unsigned int lightCount)
+{
+    if (lightCount > MAX_POINT_LIGHTS)
+    {
+        lightCount = MAX_POINT_LIGHTS;
+    }
+
+    glUniform1i(mUniformPointLightCount, lightCount);
+
+    for (size_t i = 0; i < lightCount; i++)
+    {
+        poiLight[i].UseLight(mUniformDPointLight[i].uniformAmbientIntensity,
+                             mUniformDPointLight[i].uniformColor,
+                             mUniformDPointLight[i].uniformDiffuseIntensity,
+                             mUniformDPointLight[i].uniformPosition,
+                             mUniformDPointLight[i].uniformConstant,
+                             mUniformDPointLight[i].uniformLinear,
+                             mUniformDPointLight[i].uniformQuadratic);
+    }
 }

@@ -15,8 +15,9 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "Texture.hpp"
-#include "Light.hpp"
 #include "Material.hpp"
+#include "DirectionalLight.hpp"
+#include "PointLight.hpp"
 
 int CheckGLError()
 {
@@ -80,12 +81,48 @@ void CreateObjects(std::vector<Mesh *> &meshList)
         0, 1, 2};
     GLfloat vertices[] = {
         //x  y  z   u  v   nx  ny  nz
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, -0.6f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f};
 
+    GLfloat planeVertices[] = {
+        -10.f,
+        0,
+        -10.f,
+        0.f,
+        0.f,
+        0.f,
+        -1.f,
+        0.f,
+        10.f,
+        0,
+        -10.f,
+        10.f,
+        0.f,
+        0.f,
+        -1.f,
+        0.f,
+        -10.f,
+        0,
+        10.f,
+        0.f,
+        10.f,
+        0.f,
+        -1.f,
+        0.f,
+        10.f,
+        0,
+        10.f,
+        10.f,
+        10.f,
+        0.f,
+        -1.f,
+        0.f,
+    };
+
     CalcAverageNormals(indices, 12, vertices, 32, 8, 5);
+    // CalcAverageNormals(indices, 12, planeVertices, 32, 8, 5);
 
     Mesh *obj1 = new Mesh();
     obj1->CreateMesh(vertices, indices, 32, 12);
@@ -94,6 +131,10 @@ void CreateObjects(std::vector<Mesh *> &meshList)
     Mesh *obj2 = new Mesh();
     obj2->CreateMesh(vertices, indices, 32, 12);
     meshList.push_back(obj2);
+
+    Mesh *obj3 = new Mesh();
+    obj3->CreateMesh(planeVertices, indices, 32, 12);
+    meshList.push_back(obj3);
 }
 
 void CreateShaders(std::vector<Shader> &shaderList)
@@ -105,40 +146,62 @@ void CreateShaders(std::vector<Shader> &shaderList)
 
 int main(int argc, char const *argv[])
 {
-    Window wind;
+    Window wind(1366, 768);
     wind.Initialize();
 
     std::vector<Mesh *> meshList;
     std::vector<Shader> shaderList;
+    CreateObjects(meshList);
+    CreateShaders(shaderList);
+
     Texture brickTexture("Textures/brick.png");
     brickTexture.LoadTexture();
     Texture dirtTexture("Textures/dirt.png");
     dirtTexture.LoadTexture();
+    Texture plainTexture("Textures/plain.jpg");
+    plainTexture.LoadTexture();
 
-    CreateObjects(meshList);
-    CreateShaders(shaderList);
+    Material shinyMaterial = Material(1.0f, 256);
+    Material dullMaterial = Material(0.3f, 4);
 
     Camera cam(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
-    Light mainLight(1.0f, 1.0f, 1.0f, 0.1f,
-					0.0f, 0.0f, -1.0f, 0.3f);
 
-	Material shinyMaterial = Material(1.0f, 32);
-	Material dullMaterial = Material(0.3f, 4);
+    DirectionalLight dirLight = DirectionalLight(1.0f, 1.0f, 1.0f,
+                                                 0.1f, 0.2f,
+                                                 0.0f, 0.0f, -1.0f);
+
+    PointLight pointLights[MAX_POINT_LIGHTS];
+
+    unsigned int pointLightCount = 0;
+
+    pointLights[0] = PointLight(0.f, 0.0f, 1.f,
+                                0.1f, 0.4f,
+                                4.f, 1.f, 0.f,
+                                0.3f, 0.1f, 0.1f);
+    pointLightCount++;
+
+    pointLights[1] = PointLight(0.f, 1.0f, 0.f,
+                                0.1f, 1.0f,
+                                -4.f, 2.f, 0.f,
+                                0.3f, 0.05f, 0.1f);
+    pointLightCount++;
+
+    pointLights[2] = PointLight(1.f, 0.0f, 0.f,
+                                0.1f, 1.0f,
+                                -2.f, 2.f, 0.f,
+                                0.3f, 0.05f, 0.1f);
+    pointLightCount++;
 
     shaderList[0].UseShader();
-
     GLint uniformProjection = shaderList[0].GetProjectionLocation();
     GLint uniformModel = shaderList[0].GetModelLocation();
     GLint uniformView = shaderList[0].GetViewLocation();
-    GLint unifromAmbInt = shaderList[0].GetAmbientIntensityLocation();
-    GLint uniformAmbCol = shaderList[0].GetAmbientColorLocation();
-    GLint uniformDirection = shaderList[0].GetDirectionLocation();
-    GLint uniformDiffuseIntensity = shaderList[0].GetDiffuseIntensityLocation();
     GLint uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
     GLint uniformShininess = shaderList[0].GetShininessLocation();
     GLint uniformEyePos = shaderList[0].GetEyePosLocation();
 
-    mainLight.UseLight(unifromAmbInt, uniformAmbCol, uniformDiffuseIntensity, uniformDirection);
+    shaderList[0].SetDirectionalLight(&dirLight);
+    shaderList[0].SetPointLights(&pointLights[0], pointLightCount);
 
     std::pair<GLint, GLint> bufferDims = wind.GetBufferDim();
     GLfloat aspectRatio = static_cast<GLfloat>(bufferDims.first) / static_cast<GLfloat>(bufferDims.second);
@@ -167,9 +230,8 @@ int main(int argc, char const *argv[])
 
         glm::mat4 model(1.0f);
 
-        // model = glm::translate(model, glm::vec3(0.5f * cosf(angle), 0.5f * sinf(angle), -2.5f));
-        model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        model = glm::translate(model, glm::vec3(0.5f * cosf(angle), 0.5f * sinf(angle), -2.5f));
+        // model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
         shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
@@ -179,12 +241,18 @@ int main(int argc, char const *argv[])
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));
         // model = glm::rotate(model, angle, glm::vec3(0.f, 0.f, 1.f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
         dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         dirtTexture.UseTexture();
         meshList[1]->RenderMesh();
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        plainTexture.UseTexture();
+        meshList[2]->RenderMesh();
 
         wind.SwapBuffers();
     }

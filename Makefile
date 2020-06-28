@@ -8,6 +8,8 @@ SRCS := \
 	stb_image.cpp \
 	Texture.cpp \
 	Light.cpp \
+	DirectionalLight.cpp \
+	PointLight.cpp \
 	Material.cpp
 
 ifeq ($(OS),Windows_NT)
