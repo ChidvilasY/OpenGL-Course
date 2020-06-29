@@ -9,6 +9,18 @@
             "compilerPath": "/usr/bin/gcc",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "gcc-x64"
+        },
+        {
+            "name": "Win",
+            "includePath": [
+                "C:/glm",
+                "C:/GLFW/glfw-3.3.2.bin.WIN64/include",
+                "C:/glew-2.1.0/include"
+            ],
+            "defines": [],
+            "compilerPath": "C:/Strawberry64/c/bin/gcc.exe",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

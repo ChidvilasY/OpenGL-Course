@@ -2,7 +2,7 @@
 
 #include "Light.hpp"
 
-class PointLight : Light
+class PointLight : public Light
 {
 public:
     PointLight(GLfloat red = 1.f, GLfloat green = 1.f, GLfloat blue = 1.f,
@@ -16,7 +16,7 @@ public:
 
     virtual ~PointLight();
 
-private:
+protected:
     glm::vec3 mPosition;
 
     GLfloat mConstant, mLinear, mQuadratic;

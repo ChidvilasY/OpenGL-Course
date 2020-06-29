@@ -9,7 +9,7 @@
 
 #include "DirectionalLight.hpp"
 #include "PointLight.hpp"
-
+#include "SpotLight.hpp"
 
 class Shader
 {
@@ -78,6 +78,8 @@ public:
 
     void SetDirectionalLight(DirectionalLight *dirLight);
     void SetPointLights(PointLight *poiLight, unsigned int lightCount);
+    void SetSpotLights(SpotLight *spotLight, unsigned int lightCount);
+
     void ClearShader();
 
     ~Shader();
@@ -85,11 +87,11 @@ public:
 private:
     GLuint mShaderID;
 
-    int mPointLightCount{};
+    int mPointLightCount{}, mSpotLightCount{};
 
     GLint mUniformProjection, mUniformModel, mUniformView, mEyePosLocation;
     GLint mUniformSpecularIntensity, mUniformShininess;
-    GLint mUniformPointLightCount;
+    GLint mUniformPointLightCount, mUniformSpotLightCount;
 
     struct
     {
@@ -112,7 +114,23 @@ private:
         GLint uniformQuadratic;
     };
 
-    UniformPointLight mUniformDPointLight[MAX_POINT_LIGHTS];
+    struct UniformSpotLight
+    {
+        GLint uniformColor;
+        GLint uniformAmbientIntensity;
+        GLint uniformDiffuseIntensity;
+
+        GLint uniformPosition;
+        GLint uniformConstant;
+        GLint uniformLinear;
+        GLint uniformQuadratic;
+
+        GLint uniformDirection;
+        GLint uniformEdge;
+    };
+
+    UniformPointLight mUniformPointLights[MAX_POINT_LIGHTS];
+    UniformSpotLight mUniformSpotLights[MAX_SPOT_LIGHTS];
 
     void CompileShader(const char *vertexCode, const char *fragmentCode);
     void AddShader(GLuint program, const char *shaderCode, GLenum shaderType);

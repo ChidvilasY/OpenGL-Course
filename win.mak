@@ -36,12 +36,12 @@ CFLAGS := -std=c11
 # C++ flags
 CXXFLAGS := -std=c++17
 # C/C++ flags
-CPPFLAGS := -g -Wall -pedantic -D_DEBUG=1
+CPPFLAGS := -g -Wall -pedantic -D_DEBUG=1 -static-libgcc -static-libstdc++
 # Inc flags
-INCFLAGS := -I"C:/VulkanSDK/1.2.135.0/Include" -I"C:/GLFW/glfw-3.3.2.bin.WIN64/include" -I"C:/glm"
+INCFLAGS := -I"C:/GLFW/glfw-3.3.2.bin.WIN64/include" -I"C:/glm" -I"C:/glew-2.1.0/include"
 # linker flags
-LDDIR := -L"C:/VulkanSDK/1.2.135.0/lib" -L"C:/GLFW/glfw-3.3.2.bin.WIN64/lib-mingw-w64"
-LDFLAGS := $(LDDIR) -lglfw3 -lvulkan-1 -lopengl32 -lgdi32
+LDDIR := -L"C:/GLFW/glfw-3.3.2.bin.WIN64/lib-mingw-w64" -L"C:/glew-2.1.0/lib/Release/x64"
+LDFLAGS := $(LDDIR) -lglfw3 -lopengl32 -lgdi32 -lglew32 -lglew32s -lglu32 -mwindows
 # flags required for dependency generation; passed to compilers
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEPDIR)/$*.Td
 

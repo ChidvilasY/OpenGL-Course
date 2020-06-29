@@ -21,6 +21,11 @@ public:
         return mCamPos;
     }
 
+    const glm::vec3 GetCameraDirection()
+    {
+        return glm::normalize(mCamFront);
+    }
+
     glm::mat4 CalculateViewMatrix();
 
 private:

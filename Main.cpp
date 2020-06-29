@@ -2,6 +2,7 @@
 #include <cassert>
 #include <vector>
 #include <cstring>
+#include <memory>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -18,6 +19,7 @@
 #include "Material.hpp"
 #include "DirectionalLight.hpp"
 #include "PointLight.hpp"
+#include "SpotLight.hpp"
 
 int CheckGLError()
 {
@@ -72,7 +74,7 @@ void CalcAverageNormals(unsigned int *indices, unsigned int indiceCount, GLfloat
     }
 }
 
-void CreateObjects(std::vector<Mesh *> &meshList)
+void CreateObjects(std::vector<std::unique_ptr<Mesh>> &meshList)
 {
     unsigned int indices[] = {
         0, 3, 1,
@@ -87,54 +89,26 @@ void CreateObjects(std::vector<Mesh *> &meshList)
         0.0f, 1.0f, 0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f};
 
     GLfloat planeVertices[] = {
-        -10.f,
-        0,
-        -10.f,
-        0.f,
-        0.f,
-        0.f,
-        -1.f,
-        0.f,
-        10.f,
-        0,
-        -10.f,
-        10.f,
-        0.f,
-        0.f,
-        -1.f,
-        0.f,
-        -10.f,
-        0,
-        10.f,
-        0.f,
-        10.f,
-        0.f,
-        -1.f,
-        0.f,
-        10.f,
-        0,
-        10.f,
-        10.f,
-        10.f,
-        0.f,
-        -1.f,
-        0.f,
-    };
+        // x y z u v nx ny
+        -10.f, 0, -10.f, 0.f, 0.f, 0.f, -1.f, 0.f,
+        10.f, 0, -10.f, 10.f, 0.f, 0.f, -1.f, 0.f,
+        -10.f, 0, 10.f, 0.f, 10.f, 0.f, -1.f, 0.f,
+        10.f, 0, 10.f, 10.f, 10.f, 0.f, -1.f, 0.f};
 
     CalcAverageNormals(indices, 12, vertices, 32, 8, 5);
     // CalcAverageNormals(indices, 12, planeVertices, 32, 8, 5);
 
-    Mesh *obj1 = new Mesh();
+    std::unique_ptr<Mesh> obj1 = std::make_unique<Mesh>();
     obj1->CreateMesh(vertices, indices, 32, 12);
-    meshList.push_back(obj1);
+    meshList.push_back(std::move(obj1));
 
-    Mesh *obj2 = new Mesh();
+    std::unique_ptr<Mesh> obj2 = std::make_unique<Mesh>();
     obj2->CreateMesh(vertices, indices, 32, 12);
-    meshList.push_back(obj2);
+    meshList.push_back(std::move(obj2));
 
-    Mesh *obj3 = new Mesh();
+    std::unique_ptr<Mesh> obj3 = std::make_unique<Mesh>();
     obj3->CreateMesh(planeVertices, indices, 32, 12);
-    meshList.push_back(obj3);
+    meshList.push_back(std::move(obj3));
 }
 
 void CreateShaders(std::vector<Shader> &shaderList)
@@ -149,7 +123,7 @@ int main(int argc, char const *argv[])
     Window wind(1366, 768);
     wind.Initialize();
 
-    std::vector<Mesh *> meshList;
+    std::vector<std::unique_ptr<Mesh>> meshList;
     std::vector<Shader> shaderList;
     CreateObjects(meshList);
     CreateShaders(shaderList);
@@ -167,30 +141,33 @@ int main(int argc, char const *argv[])
     Camera cam(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
 
     DirectionalLight dirLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                                 0.1f, 0.2f,
+                                                 0.0f, 0.0f,
                                                  0.0f, 0.0f, -1.0f);
 
     PointLight pointLights[MAX_POINT_LIGHTS];
+    SpotLight spotLights[MAX_POINT_LIGHTS];
 
-    unsigned int pointLightCount = 0;
+    unsigned int pointLightCount = 0, spotLightCount = 0;
 
     pointLights[0] = PointLight(0.f, 0.0f, 1.f,
-                                0.1f, 0.4f,
+                                0.1f, 1.f,
                                 4.f, 1.f, 0.f,
                                 0.3f, 0.1f, 0.1f);
     pointLightCount++;
 
     pointLights[1] = PointLight(0.f, 1.0f, 0.f,
-                                0.1f, 1.0f,
+                                0.1f, 0.1f,
                                 -4.f, 2.f, 0.f,
                                 0.3f, 0.05f, 0.1f);
     pointLightCount++;
 
-    pointLights[2] = PointLight(1.f, 0.0f, 0.f,
-                                0.1f, 1.0f,
-                                -2.f, 2.f, 0.f,
-                                0.3f, 0.05f, 0.1f);
-    pointLightCount++;
+    spotLights[0] = SpotLight(1.f, 1.0f, 1.f,
+                              0.1f, 1.0f,
+                              0.f, 0.f, 0.f,
+                              0.f, -1.f, 0.f,
+                              0.3f, 0.2f, 0.1f,
+                              20.f);
+    spotLightCount++;
 
     shaderList[0].UseShader();
     GLint uniformProjection = shaderList[0].GetProjectionLocation();
@@ -200,8 +177,11 @@ int main(int argc, char const *argv[])
     GLint uniformShininess = shaderList[0].GetShininessLocation();
     GLint uniformEyePos = shaderList[0].GetEyePosLocation();
 
+    spotLights[0].SetFlash(cam.GetCameraPosition(), cam.GetCameraDirection());
+
     shaderList[0].SetDirectionalLight(&dirLight);
-    shaderList[0].SetPointLights(&pointLights[0], pointLightCount);
+    shaderList[0].SetPointLights(pointLights, pointLightCount);
+    shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
     std::pair<GLint, GLint> bufferDims = wind.GetBufferDim();
     GLfloat aspectRatio = static_cast<GLfloat>(bufferDims.first) / static_cast<GLfloat>(bufferDims.second);
@@ -213,13 +193,20 @@ int main(int argc, char const *argv[])
     while (!wind.ShouldWindowClose())
     {
         GLfloat now = static_cast<GLfloat>(glfwGetTime()); // SDL_GetPerformanceCounter();
-        deltaTime = now - lastTime;                        // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
+        deltaTime = (now - lastTime);                      // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
         lastTime = now;
 
-        angle += 0.01f;
+        angle += deltaTime;
+        std::cout << angle << " " << 1 / deltaTime << std::endl;
         glfwPollEvents();
         cam.KeyControl(wind.GetKeyStates(), deltaTime);
         cam.MouseContol(wind.GetCursorChangeX(), wind.GetCursorChangeY());
+
+        glm::vec3 lowerSpotLight = cam.GetCameraPosition();
+        lowerSpotLight.y -= (0.3f + 0.01f * sinf(angle * 4));
+        lowerSpotLight.x -= (0.05f * sinf(angle * 5));
+        spotLights[0].SetFlash(lowerSpotLight, cam.GetCameraDirection());
+        shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -251,7 +238,7 @@ int main(int argc, char const *argv[])
         model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        plainTexture.UseTexture();
+        dirtTexture.UseTexture();
         meshList[2]->RenderMesh();
 
         wind.SwapBuffers();

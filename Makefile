@@ -10,6 +10,7 @@ SRCS := \
 	Light.cpp \
 	DirectionalLight.cpp \
 	PointLight.cpp \
+	SpotLight.cpp \
 	Material.cpp
 
 ifeq ($(OS),Windows_NT)
