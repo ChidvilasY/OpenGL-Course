@@ -20,6 +20,7 @@
 #include "DirectionalLight.hpp"
 #include "PointLight.hpp"
 #include "SpotLight.hpp"
+#include "Model.hpp"
 
 int CheckGLError()
 {
@@ -128,12 +129,15 @@ int main(int argc, char const *argv[])
     CreateObjects(meshList);
     CreateShaders(shaderList);
 
+    Model model;
+    model.LoadModel("Models/uh60.obj");
+
     Texture brickTexture("Textures/brick.png");
-    brickTexture.LoadTexture();
+    brickTexture.LoadTextureA();
     Texture dirtTexture("Textures/dirt.png");
-    dirtTexture.LoadTexture();
+    dirtTexture.LoadTextureA();
     Texture plainTexture("Textures/plain.jpg");
-    plainTexture.LoadTexture();
+    plainTexture.LoadTextureA();
 
     Material shinyMaterial = Material(1.0f, 256);
     Material dullMaterial = Material(0.3f, 4);
@@ -141,7 +145,7 @@ int main(int argc, char const *argv[])
     Camera cam(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
 
     DirectionalLight dirLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                                 0.0f, 0.0f,
+                                                 0.2f, 0.6f,
                                                  0.0f, 0.0f, -1.0f);
 
     PointLight pointLights[MAX_POINT_LIGHTS];
@@ -185,11 +189,11 @@ int main(int argc, char const *argv[])
 
     std::pair<GLint, GLint> bufferDims = wind.GetBufferDim();
     GLfloat aspectRatio = static_cast<GLfloat>(bufferDims.first) / static_cast<GLfloat>(bufferDims.second);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 1000.0f);
 
     glClearColor(0.f, 0.f, 0.f, 1.0f);
     GLfloat angle = 0;
-    GLfloat deltaTime, lastTime;
+    GLfloat deltaTime, lastTime = 0;
     while (!wind.ShouldWindowClose())
     {
         GLfloat now = static_cast<GLfloat>(glfwGetTime()); // SDL_GetPerformanceCounter();
@@ -197,7 +201,7 @@ int main(int argc, char const *argv[])
         lastTime = now;
 
         angle += deltaTime;
-        std::cout << angle << " " << 1 / deltaTime << std::endl;
+        // std::cout << 1 / deltaTime << std::endl;
         glfwPollEvents();
         cam.KeyControl(wind.GetKeyStates(), deltaTime);
         cam.MouseContol(wind.GetCursorChangeX(), wind.GetCursorChangeY());
@@ -205,8 +209,8 @@ int main(int argc, char const *argv[])
         glm::vec3 lowerSpotLight = cam.GetCameraPosition();
         lowerSpotLight.y -= (0.3f + 0.01f * sinf(angle * 4));
         lowerSpotLight.x -= (0.05f * sinf(angle * 5));
-        spotLights[0].SetFlash(lowerSpotLight, cam.GetCameraDirection());
-        shaderList[0].SetSpotLights(spotLights, spotLightCount);
+        // spotLights[0].SetFlash(lowerSpotLight, cam.GetCameraDirection());
+        // shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -215,31 +219,39 @@ int main(int argc, char const *argv[])
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(cam.CalculateViewMatrix()));
         glUniform3f(uniformEyePos, cam.GetCameraPosition().x, cam.GetCameraPosition().y, cam.GetCameraPosition().z);
 
-        glm::mat4 model(1.0f);
+        glm::mat4 modelMat(1.0f);
 
-        model = glm::translate(model, glm::vec3(0.5f * cosf(angle), 0.5f * sinf(angle), -2.5f));
+        modelMat = glm::translate(modelMat, glm::vec3(0.5f * cosf(angle), 0.5f * sinf(angle), -2.5f));
         // model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
 
         shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         brickTexture.UseTexture();
         meshList[0]->RenderMesh();
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));
+        modelMat = glm::mat4(1.0f);
+        modelMat = glm::translate(modelMat, glm::vec3(0.0f, 4.0f, -2.5f));
         // model = glm::rotate(model, angle, glm::vec3(0.f, 0.f, 1.f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
 
         dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         dirtTexture.UseTexture();
         meshList[1]->RenderMesh();
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.f));
-        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        modelMat = glm::mat4(1.0f);
+        modelMat = glm::translate(modelMat, glm::vec3(0.0f, -2.0f, 0.f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
         shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         dirtTexture.UseTexture();
         meshList[2]->RenderMesh();
+
+        modelMat = glm::mat4(1.0f);
+        modelMat = glm::translate(modelMat, glm::vec3(-3.0f, 2.0f, 0.0f));
+		modelMat = glm::rotate(modelMat, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		modelMat = glm::scale(modelMat, glm::vec3(0.4f, 0.4f, 0.4f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
+        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        model.RenderModel();
 
         wind.SwapBuffers();
     }

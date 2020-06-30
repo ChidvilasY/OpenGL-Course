@@ -11,7 +11,8 @@ SRCS := \
 	DirectionalLight.cpp \
 	PointLight.cpp \
 	SpotLight.cpp \
-	Material.cpp
+	Material.cpp \
+	Model.cpp
 
 ifeq ($(OS),Windows_NT)
 	include win.mak
