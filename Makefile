@@ -11,6 +11,7 @@ SRCS := \
 	DirectionalLight.cpp \
 	PointLight.cpp \
 	SpotLight.cpp \
+	ShadowMap.cpp \
 	Material.cpp \
 	Model.cpp
 

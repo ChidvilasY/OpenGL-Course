@@ -79,6 +79,9 @@ public:
     void SetDirectionalLight(DirectionalLight *dirLight);
     void SetPointLights(PointLight *poiLight, unsigned int lightCount);
     void SetSpotLights(SpotLight *spotLight, unsigned int lightCount);
+    void SetTexture(GLuint textureUnit);
+    void SetDirectionalShadowMap(GLuint textureUnit);
+    void SetDirectionalLightTransform(const glm::mat4 &lightTransform);
 
     void ClearShader();
 
@@ -92,6 +95,8 @@ private:
     GLint mUniformProjection, mUniformModel, mUniformView, mEyePosLocation;
     GLint mUniformSpecularIntensity, mUniformShininess;
     GLint mUniformPointLightCount, mUniformSpotLightCount;
+    GLint mUniformDirectionalLightTransform, mUniformDirectionalShadowMap;
+    GLint mUniformTexture;
 
     struct
     {

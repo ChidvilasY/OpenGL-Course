@@ -36,7 +36,7 @@ CFLAGS := -std=c11
 # C++ flags
 CXXFLAGS := -std=c++17
 # C/C++ flags
-CPPFLAGS := -g -Wall -pedantic -D_DEBUG=1 -Wno-unused-function -Wconversion
+CPPFLAGS := -g -Wall -pedantic -D_DEBUG=1 -Wno-unused-function -Wconversion -Wreorder
 # linker flags
 LDFLAGS := -lglfw3 -lGLEW -lGLU -lGL -lpthread -lm -ldl -lassimp
 # flags required for dependency generation; passed to compilers

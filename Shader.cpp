@@ -1,7 +1,10 @@
+#include <iostream>
 #include <fstream>
 
 #include <cstring>
 #include <cassert>
+
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.hpp"
 
@@ -185,6 +188,10 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode)
         uniStr = "spotLights[" + std::to_string(i) + "].edge";
         mUniformSpotLights[i].uniformEdge = GetUniformLocation(uniStr.data());
     }
+
+    mUniformTexture = GetUniformLocation("theTexture");
+    mUniformDirectionalLightTransform = GetUniformLocation("directionalLightSpaceTransform");
+    mUniformDirectionalShadowMap = GetUniformLocation("directionalShadowMap");
 }
 
 GLint Shader::GetUniformLocation(const char *uniformName)
@@ -192,7 +199,7 @@ GLint Shader::GetUniformLocation(const char *uniformName)
     GLint loc = glGetUniformLocation(mShaderID, uniformName);
     if (loc < 0)
     {
-        throw std::runtime_error("Failed to Get Unifrom Location: " + std::string(uniformName));
+        // std::cerr << "Failed to Get Unifrom Location: " << uniformName << std::endl;
     }
 
     return loc;
@@ -274,4 +281,19 @@ void Shader::SetSpotLights(SpotLight *spotLight, unsigned int lightCount)
                               mUniformSpotLights[i].uniformQuadratic,
                               mUniformSpotLights[i].uniformEdge);
     }
+}
+
+void Shader::SetTexture(GLuint textureUnit)
+{
+    glUniform1i(mUniformTexture, textureUnit);
+}
+
+void Shader::SetDirectionalShadowMap(GLuint textureUnit)
+{
+    glUniform1i(mUniformDirectionalShadowMap, textureUnit);
+}
+
+void Shader::SetDirectionalLightTransform(const glm::mat4 &lightTransform)
+{
+    glUniformMatrix4fv(mUniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(lightTransform));
 }
