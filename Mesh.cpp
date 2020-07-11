@@ -10,7 +10,7 @@ Mesh::Mesh()
 
 void Mesh::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices)
 {
-    mIndexCount = numOfIndices;
+    mIndexCount = static_cast<GLsizei>(numOfIndices);
 
     glGenVertexArrays(1, &mVAO);
     glBindVertexArray(mVAO);

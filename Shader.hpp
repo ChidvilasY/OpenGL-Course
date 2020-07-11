@@ -18,8 +18,9 @@ public:
 
     void CreateShaderFromString(const char *vertexCode, const char *fragmentCode);
     void CreateShaderFromFiles(const char *vertexLocation, const char *fragmentLocation);
+    void CreateShaderFromFiles(const char *vertexLocation, const char * geometryLocation, const char *fragmentLocation);
 
-    std::vector<char> ReadFile(const std::string fileName);
+    void Validate();
 
     GLint GetProjectionLocation()
     {
@@ -71,17 +72,30 @@ public:
         return mEyePosLocation;
     }
 
+    GLint GetOmniLightPosLocation()
+    {
+        return mUnifromLightPos;
+    }
+
+    GLint GetFarPlaneLocation()
+    {
+        return mUniformFarPlane;
+    }
+
     void UseShader()
     {
         glUseProgram(mShaderID);
     }
 
     void SetDirectionalLight(DirectionalLight *dirLight);
-    void SetPointLights(PointLight *poiLight, unsigned int lightCount);
-    void SetSpotLights(SpotLight *spotLight, unsigned int lightCount);
+    void SetPointLights(const std::vector<PointLight*> &poiLight, GLuint textureUnit, GLuint offset);
+    void SetPointLights(PointLight *pointLight, GLuint lightCount, GLuint textureUnit, GLuint offset);
+    void SetSpotLights(const std::vector<SpotLight *> &spotLights, GLuint textureUnit, GLuint offset);
+    void SetSpotLights(SpotLight *spotLight, GLuint lightCount, GLuint textureUnit, GLuint offset);
     void SetTexture(GLuint textureUnit);
     void SetDirectionalShadowMap(GLuint textureUnit);
     void SetDirectionalLightTransform(const glm::mat4 &lightTransform);
+    void SetOmniLightTransfomMatrices(std::array<glm::mat4, 6> lightMatTransforms);
 
     void ClearShader();
 
@@ -90,13 +104,13 @@ public:
 private:
     GLuint mShaderID;
 
-    int mPointLightCount{}, mSpotLightCount{};
-
     GLint mUniformProjection, mUniformModel, mUniformView, mEyePosLocation;
     GLint mUniformSpecularIntensity, mUniformShininess;
     GLint mUniformPointLightCount, mUniformSpotLightCount;
     GLint mUniformDirectionalLightTransform, mUniformDirectionalShadowMap;
     GLint mUniformTexture;
+    GLint mUnifromLightPos, mUniformFarPlane;
+    GLint mUniformLightMatrices[6];
 
     struct
     {
@@ -134,11 +148,23 @@ private:
         GLint uniformEdge;
     };
 
+    struct UniformOmniShadowMap
+    {
+        GLint uniformShadowMap;
+        GLint uniformFarPlane;
+    };
+
     UniformPointLight mUniformPointLights[MAX_POINT_LIGHTS];
     UniformSpotLight mUniformSpotLights[MAX_SPOT_LIGHTS];
+    UniformOmniShadowMap mUniformOmniShadowMap[MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS ];
 
+
+    std::vector<char> ReadFile(const std::string fileName);
     void CompileShader(const char *vertexCode, const char *fragmentCode);
+    void CompileShader(const char *vertexCode, const char *geometryCode, const char *fragmentCode);
     void AddShader(GLuint program, const char *shaderCode, GLenum shaderType);
+
+    void CompileProgram();
 
     GLint GetUniformLocation(const char *uniformName);
 };

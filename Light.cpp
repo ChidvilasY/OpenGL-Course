@@ -1,10 +1,9 @@
 #include "Light.hpp"
 
-Light::Light(GLuint shadowWidth, GLuint shadowHeight, GLfloat red, GLfloat green, GLfloat blue, GLfloat ambIntensity, GLfloat diffuseIntensity)
+Light::Light(GLsizei shadowWidth, GLsizei shadowHeight, GLfloat red, GLfloat green, GLfloat blue, GLfloat ambIntensity, GLfloat diffuseIntensity)
     : mColor(glm::vec3(red, green, blue)),
       mAmbientIntensity(ambIntensity),
-      mDiffuseIntensity(diffuseIntensity),
-      mShadowMap(new ShadowMap())
+      mDiffuseIntensity(diffuseIntensity)
 {
 }
 
@@ -18,4 +17,5 @@ void Light::UseLight(GLint ambIntensityLocation, GLint ambColorLocation, GLint d
 
 Light::~Light()
 {
+    delete mShadowMap;
 }

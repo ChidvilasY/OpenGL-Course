@@ -1,16 +1,20 @@
 #include "SpotLight.hpp"
 
-SpotLight::SpotLight(GLfloat red, GLfloat green, GLfloat blue,
+SpotLight::SpotLight(GLsizei shadowWidth, GLsizei shadowHeight,
+                     GLfloat near, GLfloat far,
+                     GLfloat red, GLfloat green, GLfloat blue,
                      GLfloat ambIntensity, GLfloat diffuseIntensity,
                      GLfloat xPos, GLfloat yPos, GLfloat zPos,
                      GLfloat xDir, GLfloat yDir, GLfloat zDir,
                      GLfloat con, GLfloat lin, GLfloat quad,
                      GLfloat edge)
-    : PointLight(red, green, blue, ambIntensity, diffuseIntensity,
+    : PointLight(shadowWidth, shadowHeight, near, far, red, green, blue,
+                 ambIntensity, diffuseIntensity,
                  xPos, yPos, zPos, con, lin, quad),
       mDirection(glm::vec3(xDir, yDir, zDir)),
-      mEdge(edge),
-      mProcessedEdge(cosf(glm::radians(edge))) {}
+      mProcessedEdge(cosf(glm::radians(edge)))
+{
+}
 
 SpotLight::~SpotLight() {}
 

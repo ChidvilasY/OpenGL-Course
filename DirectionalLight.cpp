@@ -1,6 +1,6 @@
 #include "DirectionalLight.hpp"
 
-DirectionalLight::DirectionalLight(GLuint shadowWidth, GLuint shadowHeight,
+DirectionalLight::DirectionalLight(GLsizei shadowWidth, GLsizei shadowHeight,
                                    GLfloat red, GLfloat green, GLfloat blue,
                                    GLfloat ambIntensity, GLfloat diffuseIntensity,
                                    GLfloat xDir, GLfloat yDir, GLfloat zDir)
@@ -8,6 +8,7 @@ DirectionalLight::DirectionalLight(GLuint shadowWidth, GLuint shadowHeight,
       mDirection(glm::vec3(xDir, yDir, zDir))
 {
     mLightProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f);
+    mShadowMap = new ShadowMap();
     mShadowMap->Init(shadowWidth, shadowHeight);
 }
 

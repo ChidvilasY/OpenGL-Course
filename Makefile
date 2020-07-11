@@ -12,6 +12,7 @@ SRCS := \
 	PointLight.cpp \
 	SpotLight.cpp \
 	ShadowMap.cpp \
+	OmniShadowMap.cpp \
 	Material.cpp \
 	Model.cpp
 

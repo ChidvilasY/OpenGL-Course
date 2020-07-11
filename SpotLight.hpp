@@ -5,11 +5,13 @@
 class SpotLight : public PointLight
 {
 public:
-    SpotLight(GLfloat red = 1.f, GLfloat green = 1.f, GLfloat blue = 1.f,
-              GLfloat ambIntensity = 1.f, GLfloat diffuseIntensity = 0.f,
-              GLfloat xPos = 0.f, GLfloat yPos = -1.f, GLfloat zPos = 0.f,
-              GLfloat xDir = 0.f, GLfloat yDir = -1.f, GLfloat zDir = 0.f,
-              GLfloat con = 1.f, GLfloat lin = 0.f, GLfloat quad = 0.f, GLfloat edge = 0.5f);
+    SpotLight(GLsizei shadowWidth, GLsizei shadowHeight,
+              GLfloat near, GLfloat far,
+              GLfloat red, GLfloat green, GLfloat blue,
+              GLfloat ambIntensity, GLfloat diffuseIntensity,
+              GLfloat xPos, GLfloat yPos, GLfloat zPos,
+              GLfloat xDir, GLfloat yDir, GLfloat zDir,
+              GLfloat con, GLfloat lin, GLfloat quad, GLfloat edge);
 
     void UseLight(GLint ambIntensityLocation, GLint colorLocation,
                   GLint diffuseIntensityLocation, GLint positionLocation, GLint directionLocation,
@@ -22,5 +24,5 @@ public:
 
 private:
     glm::vec3 mDirection;
-    GLfloat mEdge, mProcessedEdge;
+    GLfloat mProcessedEdge;
 };

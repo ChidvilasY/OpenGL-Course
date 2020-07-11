@@ -23,11 +23,11 @@ $(shell mkdir -p $(dir $(OBJS)) >/dev/null)
 $(shell mkdir -p $(dir $(DEPS)) >/dev/null)
 
 # C compiler
-CC := gcc
+CC := clang-9
 # C++ compiler
-CXX := g++
+CXX := clang++-9
 # linker
-LD := g++
+LD := clang++-9
 # tar
 TAR := tar
 
@@ -36,9 +36,9 @@ CFLAGS := -std=c11
 # C++ flags
 CXXFLAGS := -std=c++17
 # C/C++ flags
-CPPFLAGS := -g -Wall -pedantic -D_DEBUG=1 -Wno-unused-function -Wconversion -Wreorder
+CPPFLAGS := -g -Wall -pedantic -D_DEBUG=1 -Wno-unused-function -Wconversion -Wreorder -fsanitize=address -fno-omit-frame-pointer -O3
 # linker flags
-LDFLAGS := -lglfw3 -lGLEW -lGLU -lGL -lpthread -lm -ldl -lassimp
+LDFLAGS := -lglfw3 -lGLEW -lGLU -lGL -lpthread -lm -ldl -lassimp -fsanitize=address -lstdc++
 # flags required for dependency generation; passed to compilers
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEPDIR)/$*.Td
 

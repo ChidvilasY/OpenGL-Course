@@ -3,11 +3,12 @@
 #include "ShadowMap.hpp"
 
 ShadowMap::ShadowMap()
-    : mFBO(0), mShadowMap(0)
+    : mFBO(0), mShadowMap(0),
+      mShadowWidth(0), mShadowHeight(0)
 {
 }
 
-bool ShadowMap::Init(GLuint width, GLuint height)
+bool ShadowMap::Init(GLsizei width, GLsizei height)
 {
     mShadowWidth = width;
     mShadowHeight = height;

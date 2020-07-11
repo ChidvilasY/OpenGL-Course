@@ -9,7 +9,7 @@ class Window
 {
 
 public:
-    Window(GLint windowWidth = 1280, GLint windowHeight = 720);
+    Window(GLint windowWidth, GLint windowHeight);
 
     void Initialize();
 

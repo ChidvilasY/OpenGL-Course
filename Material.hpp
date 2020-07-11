@@ -5,7 +5,7 @@
 class Material
 {
 public:
-    Material(GLfloat specularIntensity = 0.f, GLfloat shininess = 0.f);
+    Material(GLfloat specularIntensity, GLfloat shininess);
 
     void UseMaterial(GLint specularIntensityLocation, GLint shininessLocation);
 
