@@ -101,7 +101,7 @@ vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor)
 	return ambientColor + (1. - shadowFactor) * (diffuseColor + specularColor);
 }
 
-#if FAST_APPROX_OMNISHADOW
+#if 1 // FAST_APPROX_OMNISHADOW
 float CalcPointShadowFactor(PointLight light, int shadowIndex)
 {
 	vec3 fragToLight = FragPos - light.position;

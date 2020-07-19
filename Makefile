@@ -14,7 +14,8 @@ SRCS := \
 	ShadowMap.cpp \
 	OmniShadowMap.cpp \
 	Material.cpp \
-	Model.cpp
+	Model.cpp \
+	SkyBox.cpp
 
 ifeq ($(OS),Windows_NT)
 	include win.mak

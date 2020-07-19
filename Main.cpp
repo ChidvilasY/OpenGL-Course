@@ -21,6 +21,7 @@
 #include "PointLight.hpp"
 #include "SpotLight.hpp"
 #include "Model.hpp"
+#include "SkyBox.hpp"
 
 GLint uniformProjection;
 GLint uniformModel;
@@ -40,6 +41,7 @@ Camera *cam;
 std::vector<PointLight *> pointLights;
 std::vector<SpotLight *> spotLights;
 DirectionalLight *dirLight;
+SkyBox *skyBox;
 
 bool renderPass = false;
 
@@ -215,60 +217,60 @@ void RenderScene()
     }
     meshList[2]->RenderMesh();
 
-    modelMat = glm::mat4(1.0f);
-    modelMat = glm::translate(modelMat, glm::vec3(20.0f, 17.0f, 0.f));
-    modelMat = glm::rotate(modelMat, glm::radians(90.f), glm::vec3(0.f, 0.f, 1.f));
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
-    if (renderPass)
-    {
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        plainTexture.UseTexture();
-    }
-    meshList[2]->RenderMesh();
+    // modelMat = glm::mat4(1.0f);
+    // modelMat = glm::translate(modelMat, glm::vec3(20.0f, 17.0f, 0.f));
+    // modelMat = glm::rotate(modelMat, glm::radians(90.f), glm::vec3(0.f, 0.f, 1.f));
+    // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
+    // if (renderPass)
+    // {
+    //     dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    //     plainTexture.UseTexture();
+    // }
+    // meshList[2]->RenderMesh();
 
-    modelMat = glm::mat4(1.0f);
-    modelMat = glm::translate(modelMat, glm::vec3(-20.0f, 17.0f, 0.f));
-    modelMat = glm::rotate(modelMat, glm::radians(-90.f), glm::vec3(0.f, 0.f, 1.f));
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
-    if (renderPass)
-    {
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        plainTexture.UseTexture();
-    }
-    meshList[2]->RenderMesh();
+    // modelMat = glm::mat4(1.0f);
+    // modelMat = glm::translate(modelMat, glm::vec3(-20.0f, 17.0f, 0.f));
+    // modelMat = glm::rotate(modelMat, glm::radians(-90.f), glm::vec3(0.f, 0.f, 1.f));
+    // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
+    // if (renderPass)
+    // {
+    //     dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    //     plainTexture.UseTexture();
+    // }
+    // meshList[2]->RenderMesh();
 
-    modelMat = glm::mat4(1.0f);
-    modelMat = glm::translate(modelMat, glm::vec3(0.0f, 17.0f, 20.f));
-    modelMat = glm::rotate(modelMat, glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f));
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
-    if (renderPass)
-    {
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        plainTexture.UseTexture();
-    }
-    meshList[2]->RenderMesh();
+    // modelMat = glm::mat4(1.0f);
+    // modelMat = glm::translate(modelMat, glm::vec3(0.0f, 17.0f, 20.f));
+    // modelMat = glm::rotate(modelMat, glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f));
+    // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
+    // if (renderPass)
+    // {
+    //     dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    //     plainTexture.UseTexture();
+    // }
+    // meshList[2]->RenderMesh();
 
-    modelMat = glm::mat4(1.0f);
-    modelMat = glm::translate(modelMat, glm::vec3(0.0f, 17.0f, -20.f));
-    modelMat = glm::rotate(modelMat, glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f));
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
-    if (renderPass)
-    {
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        plainTexture.UseTexture();
-    }
-    meshList[2]->RenderMesh();
+    // modelMat = glm::mat4(1.0f);
+    // modelMat = glm::translate(modelMat, glm::vec3(0.0f, 17.0f, -20.f));
+    // modelMat = glm::rotate(modelMat, glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f));
+    // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
+    // if (renderPass)
+    // {
+    //     dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    //     plainTexture.UseTexture();
+    // }
+    // meshList[2]->RenderMesh();
 
-    modelMat = glm::mat4(1.0f);
-    modelMat = glm::translate(modelMat, glm::vec3(0.0f, 37.0f, 0.f));
-    modelMat = glm::rotate(modelMat, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
-    if (renderPass)
-    {
-        dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-        plainTexture.UseTexture();
-    }
-    meshList[2]->RenderMesh();
+    // modelMat = glm::mat4(1.0f);
+    // modelMat = glm::translate(modelMat, glm::vec3(0.0f, 37.0f, 0.f));
+    // modelMat = glm::rotate(modelMat, glm::radians(180.f), glm::vec3(1.f, 0.f, 0.f));
+    // glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelMat));
+    // if (renderPass)
+    // {
+    //     dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    //     plainTexture.UseTexture();
+    // }
+    // meshList[2]->RenderMesh();
 
     modelMat = glm::mat4(1.0f);
     modelMat = glm::rotate(modelMat, -angle, glm::vec3(0.f, 1.f, 0.f));
@@ -330,6 +332,16 @@ void OmniShadowMapPass(PointLight *light, Shader *omniShadowMapShader)
 
 void RenderPass(Window &wind)
 {
+
+    std::pair<GLint, GLint> bufferDims = wind.GetBufferDim();
+    GLfloat aspectRatio = static_cast<GLfloat>(bufferDims.first) / static_cast<GLfloat>(bufferDims.second);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 1000.0f);
+    glm::mat4 view = cam->CalculateViewMatrix();
+    glViewport(0, 0, bufferDims.first, bufferDims.second);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    skyBox->Draw(view, projection);
+
     shaderList[0]->UseShader();
 
     uniformProjection = shaderList[0]->GetProjectionLocation();
@@ -339,17 +351,11 @@ void RenderPass(Window &wind)
     uniformShininess = shaderList[0]->GetShininessLocation();
     uniformEyePos = shaderList[0]->GetEyePosLocation();
 
-    std::pair<GLint, GLint> bufferDims = wind.GetBufferDim();
-    GLfloat aspectRatio = static_cast<GLfloat>(bufferDims.first) / static_cast<GLfloat>(bufferDims.second);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 1000.0f);
-
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
-    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(cam->CalculateViewMatrix()));
+    glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(uniformEyePos, cam->GetCameraPosition().x, cam->GetCameraPosition().y, cam->GetCameraPosition().z);
 
     glViewport(0, 0, bufferDims.first, bufferDims.second);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::vec3 lowerSpotLight = cam->GetCameraPosition();
     lowerSpotLight.y -= (0.3f + 0.01f * sinf(angle * 4));
@@ -400,8 +406,8 @@ int main(int argc, char const *argv[])
 
     dirLight = new DirectionalLight(2048, 2048,
                                     1.0f, 1.0f, 1.0f,
-                                    0.0f, 0.0f,
-                                    0.0f, -15.0f, -10.0f);
+                                    0.0f, 0.8f,
+                                    15.0f, -15.0f, 20.0f);
 
     pointLights.push_back(new PointLight(1024, 1024, 0.1f, 100.0f,
                                          1.f, .0f, 0.0f,
@@ -430,6 +436,16 @@ int main(int argc, char const *argv[])
                                        0.f, -1.f, 0.f,
                                        1.f, 0.f, 0.f,
                                        20.f));
+
+    std::vector<std::string> skyBoxLocs;
+    skyBoxLocs.push_back("Textures/Skyboxes/right.jpg");
+    skyBoxLocs.push_back("Textures/Skyboxes/left.jpg");
+    skyBoxLocs.push_back("Textures/Skyboxes/top.jpg");
+    skyBoxLocs.push_back("Textures/Skyboxes/bottom.jpg");
+    skyBoxLocs.push_back("Textures/Skyboxes/front.jpg");
+    skyBoxLocs.push_back("Textures/Skyboxes/back.jpg");
+
+    skyBox = new SkyBox(skyBoxLocs);
 
     glClearColor(0.f, 0.f, 0.f, 1.0f);
     GLfloat deltaTime, lastTime = 0;
